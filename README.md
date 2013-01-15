@@ -12,8 +12,12 @@ At the moment, this is purely a frontend application. Once you have cropped your
 
 TO DO:
 
--proper error messaging 
+-proper error messaging
+
 -choose image output type
+
 -allow for scaling
+
 -server side api
+
 -customization to theming
