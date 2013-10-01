@@ -20,11 +20,20 @@ Kropr.settings.debug = true;
 //init the app
 Kropr.init = function () {
 
+    // Check for browser support
+    if (!window.FileReader) {
+        alert('This browser doesn\'t support the FileReader API.');
+    }
+
+    if (!isCanvasSupported()){
+        alert('This browser doesn\'t support the Canvas element.');
+    }
+
     Kropr.resetProperties();
     //add event listeners
     Kropr.bindListeners();
 
-}
+};
 
 //reset everything
 Kropr.resetProperties = function () {
@@ -39,7 +48,7 @@ Kropr.resetProperties = function () {
 
     $("#" + Kropr.settings.results_id).fadeOut(300);
 
-}
+};
 
 //when a file is uploaded
 Kropr.fileUploaded = function (id) {
@@ -56,7 +65,7 @@ Kropr.fileUploaded = function (id) {
 
     //ensure file format is acceptable
     if (!filter.test(file.type)) {
-        //add error
+        alert('Only images are supported. Please select an image.');
         return;
     }
 
@@ -83,7 +92,7 @@ Kropr.fileUploaded = function (id) {
             }
 
             //create the canvas
-            $("#" + Kropr.settings.container_id).html('<canvas width="' + Kropr.image.naturalWidth + '" height="' + Kropr.image.naturalHeight + '" id="kropr_preview" /> ')
+            $("#" + Kropr.settings.container_id).html('<canvas width="' + Kropr.image.naturalWidth + '" height="' + Kropr.image.naturalHeight + '" id="kropr_preview" /> ');
             //create the crop button
             $("#" + Kropr.settings.container_id).append('<a href="#" id="kropr_complete" >Crop</a>');
 
@@ -109,13 +118,13 @@ Kropr.fileUploaded = function (id) {
             //draw the canvas instance
             Kropr.theSelection.draw();
 
-        }
-    }
+        };
+    };
 
     //load the file into the file reader (will call the above "reader.onload()" when ready)
     reader.readAsDataURL(file);
 
-}
+};
 
 //draw the canvas
 Kropr.drawScene = function () {
@@ -131,7 +140,7 @@ Kropr.drawScene = function () {
 
     // draw selection
     Kropr.theSelection.draw();
-}
+};
 
 //crop the image / show the results
 Kropr.getResults = function () {
@@ -151,10 +160,10 @@ Kropr.getResults = function () {
 
     //set results image with date
     $("#" + Kropr.settings.results_id).attr('src', vData);
-    $("#" + Kropr.settings.results_id).show(300);
-    $("#" + Kropr.settings.container_id).hide(300);
+    $("#" + Kropr.settings.results_id).show();
+    $("#" + Kropr.settings.container_id).hide();
 
-}
+};
 
 //bind listeners
 Kropr.bindListeners = function () {
@@ -166,7 +175,7 @@ Kropr.bindListeners = function () {
 
     });
 
-}
+};
 
 //bind listeners to objects added later
 Kropr.bindLateListeners = function () {
@@ -213,28 +222,28 @@ Kropr.bindLateListeners = function () {
         }
 
         // in case of dragging of resize cubes
-        var iFW, iFH;
+        var iFW, iFH, iFX, iFY;
         if (Kropr.theSelection.bDrag[0]) {
-            var iFX = Kropr.iMouseX - Kropr.theSelection.px;
-            var iFY = Kropr.iMouseY - Kropr.theSelection.py;
+            iFX = Kropr.iMouseX - Kropr.theSelection.px;
+            iFY = Kropr.iMouseY - Kropr.theSelection.py;
             iFW = Kropr.theSelection.w + Kropr.theSelection.x - iFX;
             iFH = Kropr.theSelection.h + Kropr.theSelection.y - iFY;
         }
         if (Kropr.theSelection.bDrag[1]) {
-            var iFX = Kropr.theSelection.x;
-            var iFY = Kropr.iMouseY - Kropr.theSelection.py;
+            iFX = Kropr.theSelection.x;
+            iFY = Kropr.iMouseY - Kropr.theSelection.py;
             iFW = Kropr.iMouseX - Kropr.theSelection.px - iFX;
             iFH = Kropr.theSelection.h + Kropr.theSelection.y - iFY;
         }
         if (Kropr.theSelection.bDrag[2]) {
-            var iFX = Kropr.theSelection.x;
-            var iFY = Kropr.theSelection.y;
+            iFX = Kropr.theSelection.x;
+            iFY = Kropr.theSelection.y;
             iFW = Kropr.iMouseX - Kropr.theSelection.px - iFX;
             iFH = Kropr.iMouseY - Kropr.theSelection.py - iFY;
         }
         if (Kropr.theSelection.bDrag[3]) {
-            var iFX = Kropr.iMouseX - Kropr.theSelection.px;
-            var iFY = Kropr.theSelection.y;
+            iFX = Kropr.iMouseX - Kropr.theSelection.px;
+            iFY = Kropr.theSelection.y;
             iFW = Kropr.theSelection.w + Kropr.theSelection.x - iFX;
             iFH = Kropr.iMouseY - Kropr.theSelection.py - iFY;
         }
@@ -309,7 +318,7 @@ Kropr.bindLateListeners = function () {
     });
 
 
-}
+};
 
 
 /* ------- */
@@ -334,7 +343,7 @@ Kropr.Selection = function (x, y, w, h) {
     this.iCSize = [this.csize, this.csize, this.csize, this.csize]; // resize cubes sizes
     this.bDrag = [false, false, false, false]; // drag statuses
     this.bDragAll = false; // drag whole selection
-}
+};
 
 Kropr.Selection.prototype.draw = function () {
 
@@ -353,7 +362,7 @@ Kropr.Selection.prototype.draw = function () {
     Kropr.ctx.fillRect(this.x + this.w - this.iCSize[1], this.y - this.iCSize[1], this.iCSize[1] * 2, this.iCSize[1] * 2);
     Kropr.ctx.fillRect(this.x + this.w - this.iCSize[2], this.y + this.h - this.iCSize[2], this.iCSize[2] * 2, this.iCSize[2] * 2);
     Kropr.ctx.fillRect(this.x - this.iCSize[3], this.y + this.h - this.iCSize[3], this.iCSize[3] * 2, this.iCSize[3] * 2);
-}
+};
 
 
 
@@ -363,10 +372,15 @@ Kropr.Selection.prototype.draw = function () {
 
 Kropr.bytesToSize = function (bytes) {
     var sizes = ['Bytes', 'KB', 'MB'];
-    if (bytes == 0) return 'n/a';
+    if (bytes === 0) return 'n/a';
 
-    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
     return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
+};
+
+function isCanvasSupported() {
+  var elem = document.createElement('canvas');
+  return !!(elem.getContext && elem.getContext('2d'));
 }
 
 
